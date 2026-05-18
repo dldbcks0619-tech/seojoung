@@ -27,6 +27,15 @@ const initialPosts = [
     }
 ];
 
+function escapeHtml(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
 class InventoryManager {
     constructor() {
         this.machines = [];
@@ -281,7 +290,10 @@ class BoardManager {
         this.listElement.innerHTML = this.posts.map((p, idx) => `
             <tr onclick="window.boardManager.showPost('${p.id}')">
                 <td>${this.posts.length - idx}</td>
-                <td style="font-weight:600;">${p.title}</td>
+                <td>
+                    ${p.coverImage ? `<img class="board-thumb" src="${escapeHtml(p.coverImage)}" alt="${escapeHtml(p.title)}">` : '<span class="board-thumb-empty">-</span>'}
+                </td>
+                <td style="font-weight:600;">${escapeHtml(p.title)}</td>
                 <td>${p.date}</td>
                 <td>${p.views || 0}</td>
             </tr>
@@ -294,49 +306,32 @@ class BoardManager {
         
         // Update views
         post.views = (post.views || 0) + 1;
-        if (window.db) {
-            window.db.collection('posts').doc(id).update({ views: post.views });
+        if (window.db && !/^\d+$/.test(String(id))) {
+            window.db.collection('posts').doc(id).update({ views: post.views }).catch(error => {
+                console.warn('Post view update skipped:', error);
+            });
         }
         localStorage.setItem('posts', JSON.stringify(this.posts));
         this.render();
 
-        // Comments
-        let comments = [];
-        if (window.db) {
-            const snap = await window.db.collection('posts').doc(id).collection('comments').orderBy('timestamp', 'asc').get();
-            comments = snap.docs.map(d => d.data());
-        } else {
-            comments = JSON.parse(localStorage.getItem(`comments_${id}`)) || [];
-        }
-
         const body = document.getElementById('modal-body');
+        const postImages = Array.isArray(post.images) ? post.images : [];
         body.innerHTML = `
             <div style="padding: 20px;">
-                <h2 style="font-size:28px; margin-bottom:10px;">${post.title}</h2>
+                <h2 style="font-size:28px; margin-bottom:10px;">${escapeHtml(post.title)}</h2>
                 <div style="color:var(--text-dim); margin-bottom:30px; padding-bottom:20px; border-bottom:1px solid var(--border);">
-                    작성자: ${post.author} | 날짜: ${post.date} | 조회: ${post.views}
+                    작성자: ${escapeHtml(post.author)} | 날짜: ${post.date} | 조회: ${post.views}
                 </div>
-                <div style="line-height:1.8; font-size:16px; min-height: 200px; white-space:pre-wrap;">${post.content}</div>
-                
-                <div class="comments-section" style="margin-top: 50px; border-top: 1px solid var(--border); padding-top: 30px;">
-                    <h4 style="margin-bottom: 20px;">답글 (${comments.length})</h4>
-                    <div id="comment-list" style="margin-bottom: 30px;">
-                        ${comments.map(c => `
-                            <div style="padding: 15px; background: var(--light-bg); border-radius: 8px; margin-bottom: 10px;">
-                                <div style="font-weight: 700; font-size: 14px; margin-bottom: 5px;">${c.author} <span style="font-weight: 400; color: var(--text-dim); font-size: 12px;">${c.date}</span></div>
-                                <div style="font-size: 14px;">${c.content}</div>
-                            </div>
-                        `).join('') || '<p style="color: var(--text-dim); font-size: 14px;">첫 답글을 남겨보세요.</p>'}
+                ${postImages.length ? `
+                    <div class="post-gallery">
+                        ${postImages.map((image, imageIndex) => `
+                            <a href="${escapeHtml(image.url)}" target="_blank" rel="noopener" class="post-gallery-item">
+                                <img src="${escapeHtml(image.url)}" alt="${escapeHtml(post.title)} 사진 ${imageIndex + 1}" loading="lazy" decoding="async">
+                            </a>
+                        `).join('')}
                     </div>
-                    
-                    <form id="comment-form" onsubmit="window.boardManager.addComment(event, '${id}')">
-                        <div style="display: flex; gap: 10px;">
-                            <input type="text" id="comment-author" placeholder="이름" required style="width: 100px; padding: 10px; border: 1px solid var(--border); border-radius: 6px;">
-                            <input type="text" id="comment-content" placeholder="답글 내용을 입력하세요" required style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 6px;">
-                            <button type="submit" class="btn-primary" style="padding: 10px 20px;">공개</button>
-                        </div>
-                    </form>
-                </div>
+                ` : ''}
+                <div style="line-height:1.8; font-size:16px; min-height: 160px; white-space:pre-wrap;">${escapeHtml(post.content)}</div>
 
                 <div style="margin-top: 40px; display: flex; gap: 10px;">
                     <button class="btn-outline" onclick="document.querySelector('.modal').classList.remove('active')">목록으로</button>
@@ -387,8 +382,19 @@ class BoardManager {
 
     async deletePost(id) {
         if (!confirm('정말 삭제하시겠습니까?')) return;
+        const post = this.posts.find(p => String(p.id) === String(id));
         if (window.db) {
             await window.db.collection('posts').doc(id).delete();
+        }
+        if (window.storage && post && Array.isArray(post.images)) {
+            for (const image of post.images) {
+                if (!image.storagePath) continue;
+                try {
+                    await window.storage.ref().child(image.storagePath).delete();
+                } catch (error) {
+                    console.warn('Storage image delete failed:', image.storagePath, error);
+                }
+            }
         }
         this.posts = this.posts.filter(p => String(p.id) !== String(id));
         localStorage.setItem('posts', JSON.stringify(this.posts));

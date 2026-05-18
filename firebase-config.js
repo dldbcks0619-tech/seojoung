@@ -11,10 +11,14 @@ const firebaseConfig = {
 
 // Initialize Firebase
 let db = null;
+let storage = null;
 try {
     if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
         firebase.initializeApp(firebaseConfig);
         db = firebase.firestore();
+        if (firebase.storage) {
+            storage = firebase.storage();
+        }
         console.log("Firebase Connected Successfully");
     } else {
         console.warn("Firebase config not set. Using LocalStorage fallback.");
@@ -24,3 +28,4 @@ try {
 }
 
 window.db = db;
+window.storage = storage;
