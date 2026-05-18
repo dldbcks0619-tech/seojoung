@@ -199,12 +199,12 @@ class InventoryManager {
                         ${localStorage.getItem('isAdmin') === 'true' ? `<button class="btn-outline" style="color: red; border-color: rgba(255,0,0,0.2);" onclick="window.inventoryManager.deleteMachine('${machine.id}')">${t.delete}</button>` : ''}
                     </div>
                     <table class="specs-table">
-                        <tr><th>${t.thMaker}</th><td>${maker}</td></tr>
-                        <tr><th>${t.thModel}</th><td>${model}</td></tr>
-                        <tr><th>${t.thYear}</th><td>${machine.year}</td></tr>
-                        <tr><th>${t.thStatus}</th><td>${this.getStatusText(machine.status)}</td></tr>
-                        <tr><th>${t.thLoc}</th><td>${machine.address || t.defaultLoc}</td></tr>
-                        ${currentSpecs.map(s => `<tr><th>${s.label}</th><td>${s.value}</td></tr>`).join('')}
+                        ${maker ? `<tr><th>${t.thMaker}</th><td>${maker}</td></tr>` : ''}
+                        ${model ? `<tr><th>${t.thModel}</th><td>${model}</td></tr>` : ''}
+                        ${machine.year ? `<tr><th>${t.thYear}</th><td>${machine.year}</td></tr>` : ''}
+                        ${machine.status ? `<tr><th>${t.thStatus}</th><td>${this.getStatusText(machine.status)}</td></tr>` : ''}
+                        ${machine.address || t.defaultLoc ? `<tr><th>${t.thLoc}</th><td>${machine.address || t.defaultLoc}</td></tr>` : ''}
+                        ${currentSpecs.map(s => s.value ? `<tr><th>${s.label}</th><td>${s.value}</td></tr>` : '').join('')}
                     </table>
                 </div>
             </div>
