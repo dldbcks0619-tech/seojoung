@@ -64,6 +64,8 @@ const i18nData = {
     ft_s1: { ko: "매각 상담", en: "Sales Consultation", cn: "销售咨询" },
     ft_s2: { ko: "매수 대행", en: "Purchase Agency", cn: "采购代理" },
     ft_s3: { ko: "AS 지원", en: "A/S Support", cn: "售后支持" },
+    ft_phone: { ko: "대표번호", en: "Phone", cn: "代表电话" },
+    ft_email: { ko: "이메일", en: "Email", cn: "电子邮件" },
     ft_copy: { ko: "© 2021 서종기계. All Rights Reserved.", en: "© 2021 Seojong Machinery. All Rights Reserved.", cn: "© 2021 瑞钟机械. 版权所有." }
 };
 
