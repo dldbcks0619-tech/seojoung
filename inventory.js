@@ -291,7 +291,7 @@ class BoardManager {
             <tr onclick="window.boardManager.showPost('${p.id}')">
                 <td>${this.posts.length - idx}</td>
                 <td>
-                    ${p.coverImage ? `<img class="board-thumb" src="${escapeHtml(p.coverImage)}" alt="${escapeHtml(p.title)}">` : '<span class="board-thumb-empty">-</span>'}
+                    ${p.coverImage ? `<img class="board-thumb" src="${escapeHtml(p.coverImage)}" alt="${escapeHtml(p.title)}">` : ''}
                 </td>
                 <td style="font-weight:600;">${escapeHtml(p.title)}</td>
                 <td>${p.date}</td>

@@ -53,7 +53,6 @@
                             <button class="btn-outline lang-btn" data-lang="en" style="padding: 4px 8px; font-size: 12px;">EN</button>
                             <button class="btn-outline lang-btn" data-lang="cn" style="padding: 4px 8px; font-size: 12px;">CN</button>
                         </div>
-                        <button id="admin-btn" class="btn-outline" data-i18n="nav_admin">관리자 모드</button>
                     </div>
                 </div>
             </nav>
@@ -81,7 +80,10 @@
             <section id="inventory" class="section">
                 <div class="container">
                     <div class="section-header">
-                        <h2 class="section-title" data-i18n="inv_title">매물 카테고리</h2>
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px;">
+                            <h2 class="section-title" data-i18n="inv_title" style="margin-bottom: 0;">매물 카테고리</h2>
+                            <button class="btn-primary admin-only" onclick="window.openAdminTab('add-machine-form')" style="display: none; font-size: 13px; padding: 6px 12px; border-radius: 4px;">+ 매물 등록</button>
+                        </div>
                         <div class="filter-bar">
                             <button class="filter-btn active" data-filter="all" data-i18n="cat_all">전체</button>
                             <button class="filter-btn" data-filter="cnc" data-i18n="cat_cnc">CNC선반</button>
@@ -105,8 +107,11 @@
             <section id="board" class="section bg-light">
                 <div class="container">
                     <div class="section-header">
-                        <h2 class="section-title" data-i18n="board_title">사진 게시판</h2>
-                        <p class="section-desc" data-i18n="board_desc">서종기계의 현장 사진과 주요 소식을 확인하세요.</p>
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 10px;">
+                            <h2 class="section-title" data-i18n="board_title" style="margin-bottom: 0;">공지사항</h2>
+                            <button class="btn-primary admin-only" onclick="window.openAdminTab('add-post-form')" style="display: none; font-size: 13px; padding: 6px 12px; border-radius: 4px;">+ 공지사항 등록</button>
+                        </div>
+                        <p class="section-desc" data-i18n="board_desc">서종기계의 주요 소식과 현장 사진을 확인하세요.</p>
                     </div>
                     <div class="board-table-wrapper">
                         <table class="board-table">
@@ -268,7 +273,7 @@
             <h2>시스템 관리자 (Admin)</h2>
             <div class="admin-tabs">
                 <button class="tab-btn active" data-tab="add-machine-form">매물 등록</button>
-                <button class="tab-btn" data-tab="add-post-form">사진 게시글 등록</button>
+                <button class="tab-btn" data-tab="add-post-form">공지사항 등록</button>
             </div>
             
             <form id="add-machine-form" class="admin-tab-content active" style="max-height: 70vh; overflow-y: auto; padding-right: 10px;">
@@ -276,7 +281,7 @@
                     <h3 style="margin-bottom: 15px; font-size: 16px;">기본 정보 및 한국어(KO)</h3>
                     <div class="form-group">
                         <label>기계명 (KO)</label>
-                        <input type="text" name="name" required>
+                        <input type="text" name="name">
                     </div>
                     <div class="form-row">
                         <div class="form-group">
@@ -290,17 +295,17 @@
                         </div>
                         <div class="form-group">
                             <label>제조사 (KO)</label>
-                            <input type="text" name="maker" required>
+                            <input type="text" name="maker">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label>모델명 (KO)</label>
-                            <input type="text" name="model" required>
+                            <input type="text" name="model">
                         </div>
                         <div class="form-group">
                             <label>연식</label>
-                            <input type="text" name="year" required>
+                            <input type="text" name="year">
                         </div>
                     </div>
                     <div class="form-group">

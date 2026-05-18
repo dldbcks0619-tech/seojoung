@@ -211,27 +211,46 @@ if (postImageInput && postImagePreview) {
 }
 
 if (adminBtn) {
+    if (localStorage.getItem('isAdmin') === 'true') {
+        adminBtn.style.display = 'inline-block';
+    }
     adminBtn.onclick = () => {
         if (localStorage.getItem('isAdmin') === 'true') {
-            if (confirm('로그아웃 하시겠습니까?')) {
+            if (confirm('로그아웃 하시겠습니까? (취소 시 관리자 창 열림)')) {
                 localStorage.removeItem('isAdmin');
                 alert('로그아웃 되었습니다.');
                 location.reload();
             } else {
                 adminPanel.classList.add('active');
             }
-        } else {
+        }
+    };
+}
+
+// Hidden Admin Shortcut (Ctrl + 5 Logo Clicks)
+let logoClickCount = 0;
+let logoClickTimer;
+const logoEl = document.querySelector('.logo');
+if (logoEl) {
+    logoEl.addEventListener('click', (e) => {
+        if (!e.ctrlKey) return;
+        e.preventDefault();
+        logoClickCount++;
+        clearTimeout(logoClickTimer);
+        logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 2000);
+        
+        if (logoClickCount >= 5) {
+            logoClickCount = 0;
             const password = prompt('관리자 암호를 입력해주세요:');
-            if (password === 'sj1234') {
+            if (password === '1234') {
                 localStorage.setItem('isAdmin', 'true');
                 alert('관리자로 로그인되었습니다.');
-                adminPanel.classList.add('active');
                 location.reload();
             } else {
                 alert('암호가 올바르지 않습니다.');
             }
         }
-    };
+    });
 }
 
 // Machine Add
@@ -246,7 +265,7 @@ if (machineForm) {
         
         try {
             const formData = new FormData(machineForm);
-            let imageUrl = "https://images.unsplash.com/photo-1537462715879-360eeb61a0ad?auto=format&fit=crop&q=80&w=800";
+            let imageUrl = "";
             
             const machineImageInput = machineForm.querySelector('input[name="machine_images"]');
             if (machineImageInput && machineImageInput.files.length > 0) {
@@ -526,4 +545,26 @@ langBtns.forEach(btn => {
             window.inventoryManager.render();
         }
     });
+});
+
+// Admin UI Utils
+window.openAdminTab = function(tabId) {
+    const adminPanel = document.getElementById('admin-panel');
+    if (adminPanel) {
+        adminPanel.classList.add('active');
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
+        });
+        document.querySelectorAll('.admin-tab-content').forEach(content => {
+            content.classList.toggle('active', content.id === tabId);
+        });
+    }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('isAdmin') === 'true') {
+        document.querySelectorAll('.admin-only').forEach(el => {
+            el.style.display = 'inline-block';
+        });
+    }
 });
