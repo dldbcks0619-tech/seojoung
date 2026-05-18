@@ -389,27 +389,56 @@
             </form>
 
             <form id="add-post-form" class="admin-tab-content">
-                <div class="form-group">
-                    <label>게시글 제목</label>
-                    <input type="text" name="title" required>
-                </div>
-                <div class="form-group">
-                    <label>내용</label>
-                    <textarea name="content" rows="6" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label>사진 업로드</label>
-                    <input type="file" name="images" accept="image/jpeg,image/png,image/webp" multiple>
-                    <p class="form-hint">JPG, PNG, WebP만 등록됩니다. 한 장당 최대 10MB까지 업로드할 수 있습니다.</p>
-                    <div id="post-image-preview" class="upload-preview"></div>
-                </div>
-                <div class="form-row">
+                <div style="background: var(--light-surface); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 15px; font-size: 16px;">기본 정보 및 한국어(KO)</h3>
                     <div class="form-group">
-                        <label>작성자</label>
-                        <input type="text" name="author" value="관리자" required>
+                        <label>게시글 제목 (KO)</label>
+                        <input type="text" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>내용 (KO)</label>
+                        <textarea name="content" rows="6" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>사진 업로드</label>
+                        <input type="file" name="images" accept="image/jpeg,image/png,image/webp" multiple>
+                        <p class="form-hint">JPG, PNG, WebP만 등록됩니다. 한 장당 최대 10MB까지 업로드할 수 있습니다.</p>
+                        <div id="post-image-preview" class="upload-preview"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>작성자</label>
+                            <input type="text" name="author" value="관리자" required>
+                        </div>
+                    </div>
+                    <button type="button" id="post-auto-translate-btn" class="btn-secondary w-full" style="margin-top: 10px;">🌐 자동 번역하기 (무료 API)</button>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #3b82f6;">
+                    <h3 style="margin-bottom: 15px; font-size: 16px;">English (EN)</h3>
+                    <div class="form-group">
+                        <label>Title (EN)</label>
+                        <input type="text" name="title_en">
+                    </div>
+                    <div class="form-group">
+                        <label>Content (EN)</label>
+                        <textarea name="content_en" rows="6"></textarea>
                     </div>
                 </div>
-                <button type="submit" class="btn-primary">게시글 등록하기</button>
+
+                <div style="background: #fcf6f5; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #ef4444;">
+                    <h3 style="margin-bottom: 15px; font-size: 16px;">中文 (CN)</h3>
+                    <div class="form-group">
+                        <label>标题 (CN)</label>
+                        <input type="text" name="title_cn">
+                    </div>
+                    <div class="form-group">
+                        <label>内容 (CN)</label>
+                        <textarea name="content_cn" rows="6"></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary w-full">게시글 등록하기</button>
             </form>
         </div>
     </div>

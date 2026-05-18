@@ -287,17 +287,20 @@ class BoardManager {
 
     render() {
         if (!this.listElement) return;
-        this.listElement.innerHTML = this.posts.map((p, idx) => `
+        const lang = window.currentLang || 'ko';
+        this.listElement.innerHTML = this.posts.map((p, idx) => {
+            const title = p[`title_${lang}`] || p.title || '';
+            return `
             <tr onclick="window.boardManager.showPost('${p.id}')">
                 <td>${this.posts.length - idx}</td>
                 <td>
-                    ${p.coverImage ? `<img class="board-thumb" src="${escapeHtml(p.coverImage)}" alt="${escapeHtml(p.title)}">` : ''}
+                    ${p.coverImage ? `<img class="board-thumb" src="${escapeHtml(p.coverImage)}" alt="${escapeHtml(title)}">` : ''}
                 </td>
-                <td style="font-weight:600;">${escapeHtml(p.title)}</td>
+                <td style="font-weight:600;">${escapeHtml(title)}</td>
                 <td>${p.date}</td>
                 <td>${p.views || 0}</td>
             </tr>
-        `).join('');
+        `}).join('');
     }
 
     async showPost(id) {
@@ -314,11 +317,15 @@ class BoardManager {
         localStorage.setItem('posts', JSON.stringify(this.posts));
         this.render();
 
+        const lang = window.currentLang || 'ko';
+        const title = post[`title_${lang}`] || post.title || '';
+        const content = post[`content_${lang}`] || post.content || '';
+
         const body = document.getElementById('modal-body');
         const postImages = Array.isArray(post.images) ? post.images : [];
         body.innerHTML = `
             <div style="padding: 20px;">
-                <h2 style="font-size:28px; margin-bottom:10px;">${escapeHtml(post.title)}</h2>
+                <h2 style="font-size:28px; margin-bottom:10px;">${escapeHtml(title)}</h2>
                 <div style="color:var(--text-dim); margin-bottom:30px; padding-bottom:20px; border-bottom:1px solid var(--border);">
                     작성자: ${escapeHtml(post.author)} | 날짜: ${post.date} | 조회: ${post.views}
                 </div>
@@ -326,12 +333,12 @@ class BoardManager {
                     <div class="post-gallery">
                         ${postImages.map((image, imageIndex) => `
                             <a href="${escapeHtml(image.url)}" target="_blank" rel="noopener" class="post-gallery-item">
-                                <img src="${escapeHtml(image.url)}" alt="${escapeHtml(post.title)} 사진 ${imageIndex + 1}" loading="lazy" decoding="async">
+                                <img src="${escapeHtml(image.url)}" alt="${escapeHtml(title)} 사진 ${imageIndex + 1}" loading="lazy" decoding="async">
                             </a>
                         `).join('')}
                     </div>
                 ` : ''}
-                <div style="line-height:1.8; font-size:16px; min-height: 160px; white-space:pre-wrap;">${escapeHtml(post.content)}</div>
+                <div style="line-height:1.8; font-size:16px; min-height: 160px; white-space:pre-wrap;">${escapeHtml(content)}</div>
 
                 <div style="margin-top: 40px; display: flex; gap: 10px;">
                     <button class="btn-outline" onclick="document.querySelector('.modal').classList.remove('active')">목록으로</button>

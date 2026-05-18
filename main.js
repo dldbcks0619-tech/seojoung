@@ -244,6 +244,7 @@ if (logoEl) {
             const password = prompt('관리자 암호를 입력해주세요:');
             if (password === '1234') {
                 window.isAdmin = true;
+                localStorage.setItem('isAdmin', 'true');
                 alert('관리자로 로그인되었습니다.');
                 document.querySelectorAll('.admin-only').forEach(el => {
                     el.style.display = 'inline-block';
@@ -380,6 +381,10 @@ if (postForm) {
             const data = {
                 title: formData.get('title'),
                 content: formData.get('content'),
+                title_en: formData.get('title_en') || formData.get('title'),
+                content_en: formData.get('content_en') || formData.get('content'),
+                title_cn: formData.get('title_cn') || formData.get('title'),
+                content_cn: formData.get('content_cn') || formData.get('content'),
                 author: formData.get('author'),
                 date: new Date().toISOString().split('T')[0],
                 views: 0,
@@ -404,6 +409,47 @@ if (postForm) {
             }
         }
     };
+
+    // Auto Translate for Post
+    const postAutoTranslateBtn = document.getElementById('post-auto-translate-btn');
+    if (postAutoTranslateBtn) {
+        async function translateText(text, targetLang) {
+            if (!text) return '';
+            try {
+                const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=ko&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`);
+                const data = await res.json();
+                return data[0].map(x => x[0]).join('');
+            } catch (e) {
+                console.error('Translation failed', e);
+                return text;
+            }
+        }
+
+        postAutoTranslateBtn.onclick = async () => {
+            const titleKo = postForm.querySelector('input[name="title"]').value;
+            const contentKo = postForm.querySelector('textarea[name="content"]').value;
+
+            postAutoTranslateBtn.innerText = "⏳ 번역 중...";
+            postAutoTranslateBtn.disabled = true;
+
+            try {
+                // English
+                if (titleKo) postForm.querySelector('input[name="title_en"]').value = await translateText(titleKo, 'en');
+                if (contentKo) postForm.querySelector('textarea[name="content_en"]').value = await translateText(contentKo, 'en');
+
+                // Chinese (Simplified)
+                if (titleKo) postForm.querySelector('input[name="title_cn"]').value = await translateText(titleKo, 'zh-CN');
+                if (contentKo) postForm.querySelector('textarea[name="content_cn"]').value = await translateText(contentKo, 'zh-CN');
+                
+                alert("자동 번역이 완료되었습니다. 내용을 확인하고 수정할 수 있습니다.");
+            } catch (e) {
+                alert("번역 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+            } finally {
+                postAutoTranslateBtn.innerText = "🌐 자동 번역하기 (무료 API)";
+                postAutoTranslateBtn.disabled = false;
+            }
+        };
+    }
 }
 
 // Contact Form
