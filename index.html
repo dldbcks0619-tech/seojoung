@@ -308,8 +308,10 @@
                         <textarea name="specs" rows="4"></textarea>
                     </div>
                     <div class="form-group">
-                        <label>이미지 URL (임시)</label>
-                        <input type="text" name="image" placeholder="https://...">
+                        <label>기계 사진 업로드 (선택)</label>
+                        <input type="file" name="machine_images" accept="image/jpeg,image/png,image/webp">
+                        <p class="form-hint">사진을 직접 올리면 자동으로 최적화되어 저장됩니다.</p>
+                        <div id="machine-image-preview" class="upload-preview"></div>
                     </div>
                     <div class="form-group">
                         <label>기계 위치 (주소)</label>

@@ -141,47 +141,55 @@ function escapeHtml(value) {
         .replace(/'/g, '&#039;');
 }
 
-async function uploadPostImages(files) {
-    const images = validatePostImages(files);
-    if (images.length === 0) return [];
-
-    if (window.storage) {
-        const uploaded = [];
-        for (const [index, file] of images.entries()) {
-            const storagePath = `post-images/${safeStorageFileName(file, index)}`;
-            const ref = window.storage.ref().child(storagePath);
-            const snapshot = await ref.put(file, {
-                contentType: file.type,
-                customMetadata: {
-                    originalName: file.name
+async function compressImageToDataURL(file, maxWidth = 800, quality = 0.6) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const img = new Image();
+            img.onload = () => {
+                let width = img.width;
+                let height = img.height;
+                if (width > maxWidth) {
+                    height = Math.round((height * maxWidth) / width);
+                    width = maxWidth;
                 }
-            });
-            uploaded.push({
-                url: await snapshot.ref.getDownloadURL(),
-                storagePath,
-                name: file.name,
-                size: file.size,
-                type: file.type
-            });
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                // 100% 무료 유지를 위해 데이터베이스에 직접 저장 가능한 DataURL(WebP)로 변환
+                const dataUrl = canvas.toDataURL('image/webp', quality);
+                resolve({
+                    url: dataUrl,
+                    name: file.name.replace(/\.[^/.]+$/, "") + ".webp",
+                    type: 'image/webp',
+                    size: Math.round(dataUrl.length * 0.75) // Approximate bytes
+                });
+            };
+            img.onerror = reject;
+            img.src = event.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+async function uploadPostImages(files) {
+    const originalImages = validatePostImages(files);
+    if (originalImages.length === 0) return [];
+
+    const uploaded = [];
+    for (const file of originalImages) {
+        try {
+            // Firestore 용량 제한(1MB)을 넘지 않도록 가로 800px로 압축
+            const result = await compressImageToDataURL(file, 800, 0.6);
+            uploaded.push(result);
+        } catch (e) {
+            console.error("Image compression failed", e);
         }
-        return uploaded;
     }
-
-    if (window.db) {
-        throw new Error('Firebase Storage가 초기화되지 않았습니다. Storage SDK와 보안 규칙을 확인해주세요.');
-    }
-
-    const localImages = [];
-    for (const file of images) {
-        localImages.push({
-            url: await readFileAsDataUrl(file),
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            localOnly: true
-        });
-    }
-    return localImages;
+    return uploaded;
 }
 
 if (postImageInput && postImagePreview) {
@@ -228,34 +236,60 @@ if (adminBtn) {
 
 // Machine Add
 if (machineForm) {
-    machineForm.onsubmit = (e) => {
+    machineForm.onsubmit = async (e) => {
         e.preventDefault();
-        const formData = new FormData(machineForm);
-        const data = {
-            name: formData.get('name'),
-            maker: formData.get('maker'),
-            model: formData.get('model'),
-            year: formData.get('year'),
-            category: formData.get('category'),
-            specs: formData.get('specs'),
-            name_en: formData.get('name_en') || formData.get('name'),
-            maker_en: formData.get('maker_en') || formData.get('maker'),
-            model_en: formData.get('model_en') || formData.get('model'),
-            specs_en: formData.get('specs_en') || formData.get('specs'),
-            name_cn: formData.get('name_cn') || formData.get('name'),
-            maker_cn: formData.get('maker_cn') || formData.get('maker'),
-            model_cn: formData.get('model_cn') || formData.get('model'),
-            specs_cn: formData.get('specs_cn') || formData.get('specs'),
-            image: formData.get('image') || "https://images.unsplash.com/photo-1537462715879-360eeb61a0ad?auto=format&fit=crop&q=80&w=800",
-            address: formData.get('address'),
-            status: 'onsale'
-        };
+        const submitBtn = machineForm.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerText = '업로드 중...';
+        }
+        
+        try {
+            const formData = new FormData(machineForm);
+            let imageUrl = "https://images.unsplash.com/photo-1537462715879-360eeb61a0ad?auto=format&fit=crop&q=80&w=800";
+            
+            const machineImageInput = machineForm.querySelector('input[name="machine_images"]');
+            if (machineImageInput && machineImageInput.files.length > 0) {
+                const uploaded = await uploadPostImages(machineImageInput.files);
+                if (uploaded.length > 0) imageUrl = uploaded[0].url;
+            }
 
-        if (window.inventoryManager) {
-            window.inventoryManager.addMachine(data);
-            adminPanel.classList.remove('active');
-            machineForm.reset();
-            showPage('#hero');
+            const data = {
+                name: formData.get('name'),
+                maker: formData.get('maker'),
+                model: formData.get('model'),
+                year: formData.get('year'),
+                category: formData.get('category'),
+                specs: formData.get('specs'),
+                name_en: formData.get('name_en') || formData.get('name'),
+                maker_en: formData.get('maker_en') || formData.get('maker'),
+                model_en: formData.get('model_en') || formData.get('model'),
+                specs_en: formData.get('specs_en') || formData.get('specs'),
+                name_cn: formData.get('name_cn') || formData.get('name'),
+                maker_cn: formData.get('maker_cn') || formData.get('maker'),
+                model_cn: formData.get('model_cn') || formData.get('model'),
+                specs_cn: formData.get('specs_cn') || formData.get('specs'),
+                image: imageUrl,
+                address: formData.get('address'),
+                status: 'onsale'
+            };
+
+            if (window.inventoryManager) {
+                window.inventoryManager.addMachine(data);
+                adminPanel.classList.remove('active');
+                machineForm.reset();
+                const preview = document.getElementById('machine-image-preview');
+                if (preview) preview.innerHTML = '';
+                showPage('#hero');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('기계 등록 중 오류가 발생했습니다.');
+        } finally {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerText = '매물 등록하기';
+            }
         }
     };
 
