@@ -98,6 +98,109 @@ const adminBtn = document.getElementById('admin-btn');
 const adminPanel = document.getElementById('admin-panel');
 const machineForm = document.getElementById('add-machine-form');
 const postForm = document.getElementById('add-post-form');
+const postImageInput = postForm ? postForm.querySelector('input[name="images"]') : null;
+const postImagePreview = document.getElementById('post-image-preview');
+
+const MAX_POST_IMAGE_SIZE = 10 * 1024 * 1024;
+const ALLOWED_POST_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
+function validatePostImages(files) {
+    const images = Array.from(files || []);
+    for (const file of images) {
+        if (!ALLOWED_POST_IMAGE_TYPES.includes(file.type)) {
+            throw new Error('JPG, PNG, WebP 이미지만 업로드할 수 있습니다.');
+        }
+        if (file.size > MAX_POST_IMAGE_SIZE) {
+            throw new Error(`${file.name} 파일이 10MB를 초과합니다.`);
+        }
+    }
+    return images;
+}
+
+function readFileAsDataUrl(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(file);
+    });
+}
+
+function safeStorageFileName(file, index) {
+    const extension = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const random = Math.random().toString(36).slice(2, 10);
+    return `${Date.now()}-${index}-${random}.${extension}`;
+}
+
+function escapeHtml(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+async function uploadPostImages(files) {
+    const images = validatePostImages(files);
+    if (images.length === 0) return [];
+
+    if (window.storage) {
+        const uploaded = [];
+        for (const [index, file] of images.entries()) {
+            const storagePath = `post-images/${safeStorageFileName(file, index)}`;
+            const ref = window.storage.ref().child(storagePath);
+            const snapshot = await ref.put(file, {
+                contentType: file.type,
+                customMetadata: {
+                    originalName: file.name
+                }
+            });
+            uploaded.push({
+                url: await snapshot.ref.getDownloadURL(),
+                storagePath,
+                name: file.name,
+                size: file.size,
+                type: file.type
+            });
+        }
+        return uploaded;
+    }
+
+    if (window.db) {
+        throw new Error('Firebase Storage가 초기화되지 않았습니다. Storage SDK와 보안 규칙을 확인해주세요.');
+    }
+
+    const localImages = [];
+    for (const file of images) {
+        localImages.push({
+            url: await readFileAsDataUrl(file),
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            localOnly: true
+        });
+    }
+    return localImages;
+}
+
+if (postImageInput && postImagePreview) {
+    postImageInput.addEventListener('change', () => {
+        try {
+            const images = validatePostImages(postImageInput.files);
+            postImagePreview.innerHTML = images.map(file => `
+                <div class="upload-preview-item">
+                    <img src="${URL.createObjectURL(file)}" alt="${escapeHtml(file.name)}">
+                    <span>${escapeHtml(file.name)}</span>
+                </div>
+            `).join('');
+        } catch (error) {
+            postImageInput.value = '';
+            postImagePreview.innerHTML = '';
+            alert(error.message);
+        }
+    });
+}
 
 if (adminBtn) {
     adminBtn.onclick = () => {
@@ -206,22 +309,44 @@ if (machineForm) {
 
 // Post Add
 if (postForm) {
-    postForm.onsubmit = (e) => {
+    postForm.onsubmit = async (e) => {
         e.preventDefault();
+        const submitBtn = postForm.querySelector('button[type="submit"]');
         const formData = new FormData(postForm);
-        const data = {
-            title: formData.get('title'),
-            content: formData.get('content'),
-            author: formData.get('author'),
-            date: new Date().toISOString().split('T')[0],
-            views: 0
-        };
+        const originalText = submitBtn ? submitBtn.innerText : '';
 
-        if (window.boardManager) {
-            window.boardManager.addPost(data);
-            adminPanel.classList.remove('active');
-            postForm.reset();
-            showPage('#board');
+        try {
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerText = '업로드 중...';
+            }
+
+            const images = await uploadPostImages(postImageInput ? postImageInput.files : []);
+            const data = {
+                title: formData.get('title'),
+                content: formData.get('content'),
+                author: formData.get('author'),
+                date: new Date().toISOString().split('T')[0],
+                views: 0,
+                images,
+                coverImage: images[0] ? images[0].url : ''
+            };
+
+            if (window.boardManager) {
+                await window.boardManager.addPost(data);
+                adminPanel.classList.remove('active');
+                postForm.reset();
+                if (postImagePreview) postImagePreview.innerHTML = '';
+                showPage('#board');
+            }
+        } catch (error) {
+            console.error('Post upload failed:', error);
+            alert(error.message || '게시글 등록 중 오류가 발생했습니다.');
+        } finally {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerText = originalText;
+            }
         }
     };
 }

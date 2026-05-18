@@ -2,7 +2,7 @@ const i18nData = {
     // Nav
     nav_home: { ko: "홈", en: "Home", cn: "首页" },
     nav_inventory: { ko: "매물 정보", en: "Inventory", cn: "机器库存" },
-    nav_board: { ko: "공지사항", en: "Notice", cn: "公告" },
+    nav_board: { ko: "사진 게시판", en: "Photos", cn: "照片" },
     nav_about: { ko: "회사 소개", en: "About Us", cn: "关于我们" },
     nav_contact: { ko: "문의하기", en: "Contact", cn: "联系我们" },
     nav_admin: { ko: "관리자 모드", en: "Admin", cn: "管理员" },
@@ -25,9 +25,10 @@ const i18nData = {
     search_ph: { ko: "기계명, 모델명, 제조사 검색...", en: "Search machines, models, makers...", cn: "搜索机器名称、型号、制造商..." },
 
     // Board
-    board_title: { ko: "공지사항 & 소식", en: "Notice & News", cn: "公告与新闻" },
-    board_desc: { ko: "서종기계의 새로운 소식과 점검 현황을 전해드립니다.", en: "Latest news and inspection updates from Seojong Machinery.", cn: "为您提供瑞钟机械的最新消息和检查状态。" },
+    board_title: { ko: "사진 게시판", en: "Photo Board", cn: "照片公告栏" },
+    board_desc: { ko: "서종기계의 현장 사진과 주요 소식을 확인하세요.", en: "View field photos and key updates from Seojong Machinery.", cn: "查看瑞钟机械的现场照片和主要消息。" },
     th_no: { ko: "번호", en: "No.", cn: "编号" },
+    th_photo: { ko: "사진", en: "Photo", cn: "照片" },
     th_title: { ko: "제목", en: "Title", cn: "标题" },
     th_date: { ko: "작성일", en: "Date", cn: "日期" },
     th_views: { ko: "조회", en: "Views", cn: "浏览" },
