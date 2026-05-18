@@ -243,9 +243,11 @@ if (logoEl) {
             logoClickCount = 0;
             const password = prompt('관리자 암호를 입력해주세요:');
             if (password === '1234') {
-                localStorage.setItem('isAdmin', 'true');
+                window.isAdmin = true;
                 alert('관리자로 로그인되었습니다.');
-                location.reload();
+                document.querySelectorAll('.admin-only').forEach(el => {
+                    el.style.display = 'inline-block';
+                });
             } else {
                 alert('암호가 올바르지 않습니다.');
             }
@@ -562,9 +564,6 @@ window.openAdminTab = function(tabId) {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (localStorage.getItem('isAdmin') === 'true') {
-        document.querySelectorAll('.admin-only').forEach(el => {
-            el.style.display = 'inline-block';
-        });
-    }
+    localStorage.removeItem('isAdmin');
+    window.isAdmin = false;
 });
