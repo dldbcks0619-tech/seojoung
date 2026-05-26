@@ -14,14 +14,22 @@ const i18nData = {
     hero_sub: { ko: "전국 최대 규모의 정밀 기계 확보와 철저한 사후 관리<br>서종기계 프리미엄 산업용 기계 무역 플랫폼", en: "Largest stock of precision machinery nationwide with thorough after-sales service.<br>Seojong Machinery, premium industrial machine trade platform.", cn: "全国最大规模精密机械库存及彻底的售后管理。<br>瑞钟机械，高端工业机械贸易平台。" },
     hero_btn_1: { ko: "매물 리스트 보기", en: "View Inventory", cn: "查看库存" },
     hero_btn_2: { ko: "빠른 상담 신청", en: "Quick Inquiry", cn: "快速咨询" },
+    hero2_title_1: { ko: "글로벌 중고 기계", en: "Global Machinery", cn: "全球二手机械" },
+    hero2_title_2: { ko: "무역의 동반자", en: "Trading Partner", cn: "贸易同伴" },
+    hero2_title_3: { ko: ", 서종기계", en: ", Sojong", cn: "，瑞钟" },
+    hero2_sub: { ko: "최상의 장비 점검과 투명한 성능 테스트를 보장합니다<br>글로벌 산업 현장의 든든한 파트너가 되어 드립니다", en: "Guaranteeing best equipment checks and transparent performance tests.<br>We are your reliable partner in the global industrial field.", cn: "提供最佳的 设备检查和透明的 性能测试。<br>瑞钟机械成为您在全球工业现场的 可靠伙伴。" },
+    hero2_btn_1: { ko: "1:1 맞춤 문의", en: "1:1 Inquiry", cn: "1对1咨询" },
+    hero2_btn_2: { ko: "회사 소개 보기", en: "About Us", cn: "关于我们" },
 
     // Inventory
     inv_title: { ko: "매물 카테고리", en: "Categories", cn: "机器分类" },
     cat_all: { ko: "전체", en: "All", cn: "全部" },
+    cat_active: { ko: "판매중", en: "On Sale", cn: "销售中" },
     cat_cnc: { ko: "CNC선반", en: "CNC Lathe", cn: "数控车床" },
     cat_mct: { ko: "머시닝센터", en: "Machining Center", cn: "加工中心" },
     cat_press: { ko: "프레스", en: "Press", cn: "冲床" },
     cat_grind: { ko: "연마기", en: "Grinder", cn: "磨床" },
+    cat_completed: { ko: "거래완료", en: "Completed", cn: "交易完成" },
     search_ph: { ko: "기계명, 모델명, 제조사 검색...", en: "Search machines, models, makers...", cn: "搜索机器名称、型号、制造商..." },
 
     // Board

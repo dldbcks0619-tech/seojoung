@@ -1,63 +1,70 @@
 // Initialize Lucide Icons
-lucide.createIcons();
+if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+}
 
 // Initialize Smooth Scroll (Lenis)
-const lenis = new Lenis({
-    duration: 0.8,
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    smoothWheel: true,
-    touchMultiplier: 1.5
-});
+let lenis;
+if (typeof Lenis !== 'undefined') {
+    lenis = new Lenis({
+        duration: 0.8,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true,
+        touchMultiplier: 1.5
+    });
 
-function raf(time) {
-    lenis.raf(time);
+    function raf(time) {
+        if (lenis) lenis.raf(time);
+        requestAnimationFrame(raf);
+    }
     requestAnimationFrame(raf);
 }
-requestAnimationFrame(raf);
 
 // GSAP Animations
-gsap.registerPlugin(ScrollTrigger);
+if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+    gsap.registerPlugin(ScrollTrigger);
 
-// Hero Animations
-const heroTL = gsap.timeline();
+    // Hero Animations
+    const heroTL = gsap.timeline();
 
-heroTL.from(".reveal-text", {
-    y: 100,
-    opacity: 0,
-    duration: 1.2,
-    ease: "power4.out",
-    stagger: 0.2
-})
-.from(".reveal-text-sub", {
-    y: 50,
-    opacity: 0,
-    duration: 1,
-    ease: "power4.out"
-}, "-=0.8")
-.from(".reveal-btn", {
-    y: 30,
-    opacity: 0,
-    duration: 0.8,
-    ease: "power4.out"
-}, "-=0.6")
-.from("#hero-video", {
-    scale: 1.2,
-    opacity: 0,
-    duration: 2,
-    ease: "power2.out"
-}, 0);
+    heroTL.from(".reveal-text", {
+        y: 100,
+        opacity: 0,
+        duration: 1.2,
+        ease: "power4.out",
+        stagger: 0.2
+    })
+    .from(".reveal-text-sub", {
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        ease: "power4.out"
+    }, "-=0.8")
+    .from(".reveal-btn", {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power4.out"
+    }, "-=0.6")
+    .from("#hero-video", {
+        scale: 1.2,
+        opacity: 0,
+        duration: 2,
+        ease: "power2.out"
+    }, 0);
 
-// Navbar scroll effect
-ScrollTrigger.create({
-    start: "top top",
-    onUpdate: (self) => {
-        if (self.scroll() > 50) {
-            document.getElementById('navbar').classList.add('scrolled');
-        } else {
-            document.getElementById('navbar').classList.remove('scrolled');
+    // Navbar scroll effect
+    ScrollTrigger.create({
+        start: "top top",
+        onUpdate: (self) => {
+            if (self.scroll() > 50) {
+                document.getElementById('navbar').classList.add('scrolled');
+            } else {
+                document.getElementById('navbar').classList.remove('scrolled');
+            }
         }
-    }
-});
+    });
+}
 
 // Modal Logic
 const modals = document.querySelectorAll('.modal');
@@ -66,6 +73,16 @@ const closeBtns = document.querySelectorAll('.close-modal');
 closeBtns.forEach(btn => {
     btn.onclick = () => {
         modals.forEach(m => m.classList.remove('active'));
+        if (window.editingMachineId) {
+            window.editingMachineId = null;
+            if (machineForm) {
+                machineForm.reset();
+                const submitBtn = machineForm.querySelector('button[type="submit"]');
+                if (submitBtn) submitBtn.innerText = '매물 등록하기';
+                const preview = document.getElementById('machine-image-preview');
+                if (preview) preview.innerHTML = '';
+            }
+        }
     };
 });
 
@@ -73,6 +90,16 @@ window.onclick = (event) => {
     modals.forEach(m => {
         if (event.target == m) {
             m.classList.remove('active');
+            if (m.id === 'admin-panel' && window.editingMachineId) {
+                window.editingMachineId = null;
+                if (machineForm) {
+                    machineForm.reset();
+                    const submitBtn = machineForm.querySelector('button[type="submit"]');
+                    if (submitBtn) submitBtn.innerText = '매물 등록하기';
+                    const preview = document.getElementById('machine-image-preview');
+                    if (preview) preview.innerHTML = '';
+                }
+            }
         }
     });
 };
@@ -210,6 +237,27 @@ if (postImageInput && postImagePreview) {
     });
 }
 
+const machineImageInput = machineForm ? machineForm.querySelector('input[name="machine_images"]') : null;
+const machineImagePreview = document.getElementById('machine-image-preview');
+
+if (machineImageInput && machineImagePreview) {
+    machineImageInput.addEventListener('change', () => {
+        try {
+            const images = validatePostImages(machineImageInput.files);
+            machineImagePreview.innerHTML = images.map(file => `
+                <div class="upload-preview-item">
+                    <img src="${URL.createObjectURL(file)}" alt="${escapeHtml(file.name)}">
+                    <span>${escapeHtml(file.name)}</span>
+                </div>
+            `).join('');
+        } catch (error) {
+            machineImageInput.value = '';
+            machineImagePreview.innerHTML = '';
+            alert(error.message);
+        }
+    });
+}
+
 if (adminBtn) {
     if (localStorage.getItem('isAdmin') === 'true') {
         adminBtn.style.display = 'inline-block';
@@ -261,19 +309,31 @@ if (machineForm) {
     machineForm.onsubmit = async (e) => {
         e.preventDefault();
         const submitBtn = machineForm.querySelector('button[type="submit"]');
+        const isEditing = !!window.editingMachineId;
         if (submitBtn) {
             submitBtn.disabled = true;
-            submitBtn.innerText = '업로드 중...';
+            submitBtn.innerText = isEditing ? '수정 중...' : '업로드 중...';
         }
         
         try {
             const formData = new FormData(machineForm);
             let imageUrl = "";
+            let imageUrls = [];
             
+            // If editing, pull existing images first as a fallback
+            if (isEditing && window.inventoryManager) {
+                const existing = window.inventoryManager.machines.find(m => String(m.id) === String(window.editingMachineId));
+                if (existing) {
+                    imageUrl = existing.image || "";
+                    imageUrls = existing.imageUrls || [];
+                }
+            }
+
             const machineImageInput = machineForm.querySelector('input[name="machine_images"]');
             if (machineImageInput && machineImageInput.files.length > 0) {
                 const uploaded = await uploadPostImages(machineImageInput.files);
-                if (uploaded.length > 0) imageUrl = uploaded[0].url;
+                imageUrls = uploaded.map(u => u.url);
+                if (imageUrls.length > 0) imageUrl = imageUrls[0];
             }
 
             const data = {
@@ -283,21 +343,31 @@ if (machineForm) {
                 year: formData.get('year'),
                 category: formData.get('category'),
                 specs: formData.get('specs'),
+                description: formData.get('description') || '',
                 name_en: formData.get('name_en') || formData.get('name'),
                 maker_en: formData.get('maker_en') || formData.get('maker'),
                 model_en: formData.get('model_en') || formData.get('model'),
                 specs_en: formData.get('specs_en') || formData.get('specs'),
+                description_en: formData.get('description_en') || formData.get('description') || '',
                 name_cn: formData.get('name_cn') || formData.get('name'),
                 maker_cn: formData.get('maker_cn') || formData.get('maker'),
                 model_cn: formData.get('model_cn') || formData.get('model'),
                 specs_cn: formData.get('specs_cn') || formData.get('specs'),
+                description_cn: formData.get('description_cn') || formData.get('description') || '',
                 image: imageUrl,
+                imageUrls: imageUrls,
                 address: formData.get('address'),
-                status: 'onsale'
+                status: formData.get('status') || 'onsale'
             };
 
             if (window.inventoryManager) {
-                window.inventoryManager.addMachine(data);
+                if (isEditing) {
+                    await window.inventoryManager.updateMachine(window.editingMachineId, data);
+                    window.editingMachineId = null;
+                    if (submitBtn) submitBtn.innerText = '매물 등록하기';
+                } else {
+                    await window.inventoryManager.addMachine(data);
+                }
                 adminPanel.classList.remove('active');
                 machineForm.reset();
                 const preview = document.getElementById('machine-image-preview');
@@ -306,11 +376,15 @@ if (machineForm) {
             }
         } catch (error) {
             console.error(error);
-            alert('기계 등록 중 오류가 발생했습니다.');
+            alert(isEditing ? '기계 수정 중 오류가 발생했습니다.' : '기계 등록 중 오류가 발생했습니다.');
         } finally {
             if (submitBtn) {
                 submitBtn.disabled = false;
-                submitBtn.innerText = '매물 등록하기';
+                if (!window.editingMachineId) {
+                    submitBtn.innerText = '매물 등록하기';
+                } else {
+                    submitBtn.innerText = '매물 수정 완료';
+                }
             }
         }
     };
@@ -335,6 +409,7 @@ if (machineForm) {
             const makerKo = machineForm.querySelector('input[name="maker"]').value;
             const modelKo = machineForm.querySelector('input[name="model"]').value;
             const specsKo = machineForm.querySelector('textarea[name="specs"]').value;
+            const descKo = machineForm.querySelector('textarea[name="description"]').value;
 
             autoTranslateBtn.innerText = "⏳ 번역 중...";
             autoTranslateBtn.disabled = true;
@@ -345,12 +420,14 @@ if (machineForm) {
                 if (makerKo) machineForm.querySelector('input[name="maker_en"]').value = await translateText(makerKo, 'en');
                 if (modelKo) machineForm.querySelector('input[name="model_en"]').value = await translateText(modelKo, 'en');
                 if (specsKo) machineForm.querySelector('textarea[name="specs_en"]').value = await translateText(specsKo, 'en');
+                if (descKo) machineForm.querySelector('textarea[name="description_en"]').value = await translateText(descKo, 'en');
 
                 // Chinese (Simplified)
                 if (nameKo) machineForm.querySelector('input[name="name_cn"]').value = await translateText(nameKo, 'zh-CN');
                 if (makerKo) machineForm.querySelector('input[name="maker_cn"]').value = await translateText(makerKo, 'zh-CN');
                 if (modelKo) machineForm.querySelector('input[name="model_cn"]').value = await translateText(modelKo, 'zh-CN');
                 if (specsKo) machineForm.querySelector('textarea[name="specs_cn"]').value = await translateText(specsKo, 'zh-CN');
+                if (descKo) machineForm.querySelector('textarea[name="description_cn"]').value = await translateText(descKo, 'zh-CN');
                 
                 alert("자동 번역이 완료되었습니다. 내용을 확인하고 수정할 수 있습니다.");
             } catch (e) {
@@ -513,13 +590,15 @@ function showPage(targetId) {
 
     // Scroll to target
     if (targetId === '#hero') {
-        lenis.scrollTo(0, { immediate: true });
+        if (lenis) lenis.scrollTo(0, { immediate: true });
+        else window.scrollTo(0, 0);
     } else {
         // Give the DOM a tiny bit of time to render the block display before calculating scroll position
         setTimeout(() => {
             const targetEl = document.querySelector(targetId);
             if (targetEl) {
-                lenis.scrollTo(targetEl, { offset: -80, duration: 1.2 });
+                if (lenis) lenis.scrollTo(targetEl, { offset: -80, duration: 1.2 });
+                else targetEl.scrollIntoView({ behavior: 'smooth' });
             }
         }, 50);
     }
@@ -613,3 +692,42 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.removeItem('isAdmin');
     window.isAdmin = false;
 });
+
+// Hero Slider logic with 5-Second Autoplay
+let currentHeroSlide = 0;
+const totalHeroSlides = 2;
+let heroSliderInterval;
+
+window.setHeroSlide = function(index) {
+    if (index < 0 || index >= totalHeroSlides) return;
+    currentHeroSlide = index;
+    
+    const slider = document.querySelector('.hero-slider');
+    if (slider) {
+        slider.style.transform = `translateX(-${index * 50}%)`;
+    }
+    
+    // Toggle active class on slide elements
+    const slides = document.querySelectorAll('.hero-slide');
+    slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === index);
+    });
+    
+    const dots = document.querySelectorAll('.hero-dot');
+    dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+    });
+    
+    resetHeroSliderTimer();
+}
+
+function resetHeroSliderTimer() {
+    clearInterval(heroSliderInterval);
+    heroSliderInterval = setInterval(() => {
+        let next = (currentHeroSlide + 1) % totalHeroSlides;
+        window.setHeroSlide(next);
+    }, 5000); // Natural 5-second interval for optimal readability and dynamic transitions
+}
+
+// Start autoplay timer on load
+resetHeroSliderTimer();

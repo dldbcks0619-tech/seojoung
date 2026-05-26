@@ -57,23 +57,50 @@
                 </div>
             </nav>
 
-            <!-- Hero Section -->
+            <!-- Hero Section with Group Slider -->
             <section id="hero" class="full-screen">
-                <div class="video-background">
-                    <div class="overlay"></div>
-                    <video autoplay muted loop playsinline id="hero-video" preload="metadata">
-                        <source src="main.mp4" type="video/mp4">
-                    </video>
-                </div>
-                <div class="hero-content">
-                    <h1 class="reveal-text"><span data-i18n="hero_title_1">정밀함의 가치를</span><br><span data-i18n="hero_title_2" style="color:var(--primary);">중고 매매</span><span data-i18n="hero_title_3">에 담다.</span></h1>
-                    <p class="reveal-text-sub" data-i18n="hero_sub">전국 최대 규모의 정밀 기계 확보와 철저한 사후 관리<br>서종기계 프리미엄 산업용 기계 무역 플랫폼</p>
-                    <div class="hero-btns reveal-btn">
-                        <a href="#inventory" class="btn-primary" data-i18n="hero_btn_1">매물 리스트 보기</a>
-                        <a href="#contact" class="btn-secondary" data-i18n="hero_btn_2">빠른 상담 신청</a>
+                <div class="hero-slider">
+                    <!-- Slide 1 (main.mp4) -->
+                    <div class="hero-slide active">
+                        <div class="video-background">
+                            <div class="overlay"></div>
+                            <video autoplay muted loop playsinline preload="metadata">
+                                <source src="main.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="hero-content">
+                            <h1 class="reveal-text"><span data-i18n="hero_title_1">정밀함의 가치를</span><br><span data-i18n="hero_title_2" style="color:var(--primary);">중고 매매</span><span data-i18n="hero_title_3">에 담다.</span></h1>
+                            <p class="reveal-text-sub" data-i18n="hero_sub">전국 최대 규모의 정밀 기계 확보와 철저한 사후 관리<br>서종기계 프리미엄 산업용 기계 무역 플랫폼</p>
+                            <div class="hero-btns reveal-btn">
+                                <a href="#inventory" class="btn-primary" data-i18n="hero_btn_1">매물 리스트 보기</a>
+                                <a href="#contact" class="btn-secondary" data-i18n="hero_btn_2">빠른 상담 신청</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Slide 2 (1234.mp4) -->
+                    <div class="hero-slide">
+                        <div class="video-background">
+                            <div class="overlay"></div>
+                            <video autoplay muted loop playsinline preload="metadata">
+                                <source src="1234.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="hero-content">
+                            <h1 class="reveal-text"><span data-i18n="hero2_title_1">글로벌 중고 기계</span><br><span data-i18n="hero2_title_2" style="color:var(--primary);">무역의 동반자</span><span data-i18n="hero2_title_3">, 서종기계</span></h1>
+                            <p class="reveal-text-sub" data-i18n="hero2_sub">최상의 장비 점검과 투명한 성능 테스트를 보장합니다<br>글로벌 산업 현장의 든든한 파트너가 되어 드립니다</p>
+                            <div class="hero-btns reveal-btn">
+                                <a href="#contact" class="btn-primary" data-i18n="hero2_btn_1">1:1 맞춤 문의</a>
+                                <a href="#about" class="btn-secondary" data-i18n="hero2_btn_2">회사 소개 보기</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
+                
+                <!-- Hero Slider Dots -->
+                <div class="hero-slider-dots">
+                    <span class="hero-dot active" onclick="window.setHeroSlide(0)"></span>
+                    <span class="hero-dot" onclick="window.setHeroSlide(1)"></span>
+                </div>
             </section>
 
             <!-- Inventory Section -->
@@ -107,10 +134,12 @@
                         </div>
                         <div class="filter-bar">
                             <button class="filter-btn active" data-filter="all" data-i18n="cat_all">전체</button>
+                            <button class="filter-btn" data-filter="active" data-i18n="cat_active">판매중</button>
                             <button class="filter-btn" data-filter="cnc" data-i18n="cat_cnc">CNC선반</button>
                             <button class="filter-btn" data-filter="mct" data-i18n="cat_mct">머시닝센터</button>
                             <button class="filter-btn" data-filter="press" data-i18n="cat_press">프레스</button>
                             <button class="filter-btn" data-filter="grind" data-i18n="cat_grind">연마기</button>
+                            <button class="filter-btn" data-filter="completed" data-i18n="cat_completed">거래완료</button>
                         </div>
                         <div class="search-box">
                             <i data-lucide="search"></i>
@@ -142,7 +171,6 @@
                                     <th data-i18n="th_photo">사진</th>
                                     <th data-i18n="th_title">제목</th>
                                     <th data-i18n="th_date">작성일</th>
-                                    <th data-i18n="th_views">조회</th>
                                 </tr>
                             </thead>
                             <tbody id="board-list">
@@ -272,7 +300,7 @@
     </div>
 
     <!-- Machine Detail Modal -->
-    <div id="detail-modal" class="modal">
+    <div id="detail-modal" class="modal" data-lenis-prevent>
         <div class="modal-content">
             <button class="close-modal">&times;</button>
             <div id="modal-body"></div>
@@ -280,7 +308,7 @@
     </div>
 
     <!-- Admin Panel Overlay -->
-    <div id="admin-panel" class="modal">
+    <div id="admin-panel" class="modal" data-lenis-prevent>
         <div class="modal-content admin-content">
             <button class="close-modal">&times;</button>
             <h2>시스템 관리자 (Admin)</h2>
@@ -289,7 +317,7 @@
                 <button class="tab-btn" data-tab="add-post-form">공지사항 등록</button>
             </div>
             
-            <form id="add-machine-form" class="admin-tab-content active" style="max-height: 70vh; overflow-y: auto; padding-right: 10px;">
+            <form id="add-machine-form" class="admin-tab-content active">
                 <div style="background: var(--light-surface); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
                     <h3 style="margin-bottom: 15px; font-size: 16px;">기본 정보 및 한국어(KO)</h3>
                     <div class="form-group">
@@ -307,18 +335,30 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>제조사 (KO)</label>
-                            <input type="text" name="maker">
+                            <label>상태</label>
+                            <select name="status">
+                                <option value="onsale">판매중</option>
+                                <option value="reserved">예약중</option>
+                                <option value="completed">거래완료</option>
+                            </select>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
+                            <label>제조사 (KO)</label>
+                            <input type="text" name="maker">
+                        </div>
+                        <div class="form-group">
                             <label>모델명 (KO)</label>
                             <input type="text" name="model">
                         </div>
+                    </div>
+                    <div class="form-row">
                         <div class="form-group">
                             <label>연식</label>
                             <input type="text" name="year">
+                        </div>
+                        <div class="form-group">
                         </div>
                     </div>
                     <div class="form-group">
@@ -326,15 +366,19 @@
                         <textarea name="specs" rows="4"></textarea>
                     </div>
                     <div class="form-group">
-                        <label>기계 사진 업로드 (선택)</label>
-                        <input type="file" name="machine_images" accept="image/jpeg,image/png,image/webp">
+                        <label>상세 설명 (줄글 형태, 선택, KO)</label>
+                        <textarea name="description" rows="4" placeholder="표 형태 외에 길게 설명할 내용을 입력해주세요."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>기계 사진 업로드 (선택, 다중 선택 가능)</label>
+                        <input type="file" name="machine_images" accept="image/jpeg,image/png,image/webp" multiple>
                         <p class="form-hint">사진을 직접 올리면 자동으로 최적화되어 저장됩니다.</p>
                         <div id="machine-image-preview" class="upload-preview"></div>
                     </div>
                     <div class="form-group">
                         <label>기계 위치 (주소)</label>
                         <div style="display: flex; gap: 10px;">
-                            <input type="text" id="machine-address" name="address" readonly placeholder="주소 검색을 이용해주세요" required>
+                            <input type="text" id="machine-address" name="address" readonly placeholder="주소 검색을 이용해주세요">
                             <button type="button" class="btn-outline" onclick="window.inventoryManager.openPostcode()" style="white-space: nowrap; flex-shrink: 0;">주소 검색</button>
                         </div>
                     </div>
@@ -361,6 +405,10 @@
                         <label>Specs (EN)</label>
                         <textarea name="specs_en" rows="3"></textarea>
                     </div>
+                    <div class="form-group">
+                        <label>Description (EN)</label>
+                        <textarea name="description_en" rows="3" placeholder="Detailed description in English"></textarea>
+                    </div>
                 </div>
 
                 <div style="background: #fcf6f5; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #ef4444;">
@@ -382,6 +430,10 @@
                     <div class="form-group">
                         <label>规格 (CN)</label>
                         <textarea name="specs_cn" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>详细描述 (CN)</label>
+                        <textarea name="description_cn" rows="3" placeholder="Detailed description in Chinese"></textarea>
                     </div>
                 </div>
 
@@ -442,6 +494,11 @@
             </form>
         </div>
     </div>
+
+    <!-- Floating Instagram Widget -->
+    <a href="https://www.instagram.com/seojongmachinery/" target="_blank" rel="noopener noreferrer" class="instagram-float" aria-label="서종기계 인스타그램">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-instagram"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+    </a>
 
     <script src="main.js"></script>
     <script src="inventory.js"></script>
