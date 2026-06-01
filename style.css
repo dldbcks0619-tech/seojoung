@@ -1234,18 +1234,22 @@ footer {
     100% { opacity: 1; }
 }
 
-/* Kakao Map fix for zoom ghosting and rendering issues */
+/* Kakao Map fix for zoom ghosting, rendering issues, and global style leakage */
 #map {
     transform: translateZ(0);
     overflow: hidden;
 }
-#map img {
+#map img, .daummap img, .kakaomap img, [id*="daum"] img {
     max-width: none !important;
     vertical-align: top !important;
     margin: 0 !important;
     padding: 0 !important;
     border: 0 !important;
     outline: none !important;
+    opacity: 1 !important;
+    box-shadow: none !important;
+    mix-blend-mode: normal !important;
+    background: transparent !important;
 }
 #map div {
     transition: none !important;
