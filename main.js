@@ -577,9 +577,6 @@ if (contactForm) {
             const emailPromise = fetch("https://submify.vercel.app/dldbcks0619@naver.com", {
                 method: "POST",
                 mode: "no-cors",
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
                 body: params
             });
 
