@@ -532,20 +532,95 @@ if (postForm) {
 // Contact Form
 const contactForm = document.getElementById('main-contact-form');
 if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
+    contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        // 1. Check privacy agreement checkbox
+        const privacyCheckbox = document.getElementById('privacy-agree-checkbox');
+        if (!privacyCheckbox || !privacyCheckbox.checked) {
+            const lang = window.currentLang || 'ko';
+            const alertMsg = (window.i18nData && window.i18nData.alert_privacy && window.i18nData.alert_privacy[lang])
+                || "개인정보 수집 및 이용에 동의하셔야 신청이 가능합니다.";
+            alert(alertMsg);
+            return;
+        }
+
         const name = contactForm.querySelector('input[type="text"]').value;
         const phone = contactForm.querySelector('input[type="tel"]').value;
         const model = contactForm.querySelectorAll('input[type="text"]')[1].value;
         const message = contactForm.querySelector('textarea').value;
 
-        const subject = `[서종기계 매물문의] ${name}님`;
-        const body = `성함: ${name}\n연락처: ${phone}\n관심기종: ${model}\n내용: ${message}`;
-        
-        window.location.href = `mailto:dldbcks0619@naver.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        
-        alert('이메일 클라이언트가 실행됩니다. 메일을 보내주시면 확인 후 연락드리겠습니다.');
-        contactForm.reset();
+        // 2. Visual Feedback (Loading State)
+        const submitBtn = contactForm.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn ? submitBtn.innerHTML : '상담 신청하기';
+        const lang = window.currentLang || 'ko';
+        const sendingText = (window.i18nData && window.i18nData.submit_btn_sending && window.i18nData.submit_btn_sending[lang])
+            || "전송 중...";
+
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = sendingText;
+        }
+
+        // 3. Prepare Payload
+        const emailSubject = `[서종기계 웹사이트 문의] ${name}님의 파트너십 문의입니다.`;
+
+        try {
+            // 4. Send Email via FormSubmit AJAX API
+            const emailPromise = fetch("https://formsubmit.co/ajax/dldbcks0619@naver.com", {
+                method: "POST",
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: name,
+                    phone: phone,
+                    model: model,
+                    message: message,
+                    _subject: emailSubject,
+                    _captcha: "false"
+                })
+            });
+
+            // 5. Save in Firebase Firestore inquiries collection as Backup (Fail-silent)
+            let dbPromise = Promise.resolve();
+            if (window.db) {
+                dbPromise = window.db.collection('inquiries').add({
+                    name: name,
+                    phone: phone,
+                    model: model,
+                    message: message,
+                    status: 'unread',
+                    createdAt: new Date().toISOString()
+                }).catch(err => {
+                    console.warn("Firestore backup inquiry save failed (possibly due to rules or config):", err);
+                });
+            }
+
+            // Wait for both to complete (fail-silent for DB)
+            const [emailResponse] = await Promise.all([emailPromise, dbPromise]);
+            if (!emailResponse.ok) {
+                throw new Error("Email sending API failed with status: " + emailResponse.status);
+            }
+
+            // 6. Success
+            const successMsg = (window.i18nData && window.i18nData.alert_success && window.i18nData.alert_success[lang])
+                || "상담 신청이 정상적으로 접수되었습니다. 확인 후 신속하게 연락드리겠습니다.";
+            alert(successMsg);
+
+            // Reset form and checkbox
+            contactForm.reset();
+        } catch (error) {
+            console.error("Inquiry submission failed:", error);
+            alert(lang === 'ko' ? "문의 전송 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요." : "An error occurred while sending your inquiry. Please try again later.");
+        } finally {
+            // Restore button state
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
+        }
     });
 }
 

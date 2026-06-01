@@ -61,6 +61,60 @@ const i18nData = {
     ph_model: { ko: "관심 기종 / 모델명", en: "Interested Machine / Model", cn: "感兴趣的机型/型号" },
     ph_msg: { ko: "문의 내용을 입력해주세요", en: "Please enter your message", cn: "请输入您的咨询内容" },
     submit_btn: { ko: "상담 신청하기", en: "Submit Inquiry", cn: "提交咨询" },
+    privacy_agree: { ko: "개인정보수집 및 이용에 동의합니다.", en: "I agree to the collection and use of personal information.", cn: "我同意收集和使用个人信息。" },
+    alert_privacy: { ko: "개인정보 수집 및 이용에 동의하셔야 신청이 가능합니다.", en: "You must agree to the collection and use of personal information to apply.", cn: "您必须同意收集和使用个人信息才能申请。" },
+    alert_success: { ko: "상담 신청이 정상적으로 접수되었습니다. 확인 후 신속하게 연락드리겠습니다.", en: "Your inquiry has been successfully submitted. We will contact you shortly.", cn: "您的咨询已成功提交。我们将尽快与您联系。" },
+    submit_btn_sending: { ko: "전송 중...", en: "Sending...", cn: "发送中..." },
+    privacy_content: {
+        ko: `<h5>개인정보의 수집 및 이용목적</h5>
+<ul>
+    <li>서비스 이용에 따른 본인식별, 실명확인, 가입의사 확인, 연령제한 서비스 이용</li>
+    <li>고지사항 전달, 불만처리 의사소통 경로 확보, 물품배송 시 정확한 배송지 정보 확보</li>
+    <li>신규 서비스 등 최신정보 안내 및 개인맞춤서비스 제공을 위한 자료</li>
+    <li>기타 원활한 양질의 서비스 제공 등</li>
+</ul>
+<h5>수집하는 개인정보의 항목</h5>
+<ul>
+    <li>이름, 이메일, 주민등록번호, 주소, 연락처, 핸드폰번호, 그 외 선택항목</li>
+</ul>
+<h5>개인정보의 보유 및 이용기간</h5>
+<ul>
+    <li>원칙적으로 개인정보의 수집 또는 제공받은 목적 달성 시 지체 없이 파기합니다.</li>
+    <li>다만, 원활한 서비스의 상담을 위해 상담 완료 후 내용을 3개월간 보유할 수 있으며 전자상거래에서의 소비자보호에 관한 법률 등 타법률에 의해 보존할 필요가 있는 경우에는 일정기간 보존합니다.</li>
+</ul>`,
+        en: `<h5>Purpose of Collection and Use</h5>
+<ul>
+    <li>Identity verification, real-name confirmation, membership intent, age-restricted services.</li>
+    <li>Delivery of notices, complaint handling, securing accurate address for shipments.</li>
+    <li>Introduction of new services and tailored recommendations.</li>
+    <li>Other provisions of quality service.</li>
+</ul>
+<h5>Items Collected</h5>
+<ul>
+    <li>Name, Email, Resident ID, Address, Contact, Mobile Number, other optional items.</li>
+</ul>
+<h5>Retention and Use Period</h5>
+<ul>
+    <li>In principle, once the purpose is achieved, the information is destroyed immediately.</li>
+    <li>However, for smooth consultation, records may be kept for 3 months after completion, or for a certain period if required by other laws.</li>
+</ul>`,
+        cn: `<h5>收集和使用个人信息的目的</h5>
+<ul>
+    <li>服务使用相关的身份识别、实名确认、加入意向确认、年龄限制服务使用。</li>
+    <li>通知送达、投诉处理沟通渠道保障、物品配送时准确配送地址保障。</li>
+    <li>新服务等最新信息介绍及提供个人定制服务的资料。</li>
+    <li>其它顺利提供优质服务等。</li>
+</ul>
+<h5>收集的个人信息项目</h5>
+<ul>
+    <li>姓名、电子邮件、居民身份证号、地址、联系电话、手机号码及其他选择项目。</li>
+</ul>
+<h5>个人信息的保存及使用期限</h5>
+<ul>
+    <li>原则上，在达到收集或提供个人信息的目的后，将立即销毁。</li>
+    <li>但是，为了顺利进行咨询，咨询完成后内容可保留3个月，或者在其他法律要求时保留一定期限。</li>
+</ul>`
+    },
 
     // CTA
     cta_title: { ko: "찾으시는 기계가 없으신가요?", en: "Can't find the machine you're looking for?", cn: "找不到您想要的机器吗？" },
