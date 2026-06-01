@@ -588,8 +588,8 @@ if (contactForm) {
         params.append("_subject", emailSubject);
 
         try {
-            // 4. Send Email via FormSubmit.co AJAX API (using mode: "no-cors" to completely bypass CORS validation on the response)
-            const emailPromise = fetch("https://formsubmit.co/ajax/dldbcks0619@naver.com", {
+            // 4. Send Email via Submify AJAX API (using mode: "no-cors" to completely bypass CORS validation on the response)
+            const emailPromise = fetch("https://submify.vercel.app/dldbcks0619@naver.com", {
                 method: "POST",
                 mode: "no-cors",
                 body: params
