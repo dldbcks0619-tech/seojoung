@@ -566,8 +566,8 @@ if (contactForm) {
         const emailSubject = `[서종기계 웹사이트 문의] ${name}님의 파트너십 문의입니다.`;
 
         try {
-            // 4. Send Email via FormSubmit AJAX API
-            const emailPromise = fetch("https://formsubmit.co/ajax/dldbcks0619@naver.com", {
+            // 4. Send Email via Submify AJAX API (Replacement for FormSubmit due to downtime)
+            const emailPromise = fetch("https://submify.vercel.app/dldbcks0619@naver.com", {
                 method: "POST",
                 headers: { 
                     'Content-Type': 'application/json',
@@ -578,8 +578,7 @@ if (contactForm) {
                     phone: phone,
                     model: model,
                     message: message,
-                    _subject: emailSubject,
-                    _captcha: "false"
+                    _subject: emailSubject
                 })
             });
 
