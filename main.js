@@ -566,20 +566,21 @@ if (contactForm) {
         const emailSubject = `[서종기계 웹사이트 문의] ${name}님의 파트너십 문의입니다.`;
 
         try {
-            // 4. Send Email via Submify AJAX API (Replacement for FormSubmit due to downtime)
+            // 4. Send Email via Submify API (using URLSearchParams & no-cors mode to bypass browser CORS preflight check)
+            const params = new URLSearchParams();
+            params.append("이름 (Name)", name);
+            params.append("연락처 (Phone)", phone);
+            params.append("관심 기종 / 모델명 (Model)", model);
+            params.append("문의내용 (Message)", message);
+            params.append("_subject", emailSubject);
+
             const emailPromise = fetch("https://submify.vercel.app/dldbcks0619@naver.com", {
                 method: "POST",
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                mode: "no-cors",
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: JSON.stringify({
-                    name: name,
-                    phone: phone,
-                    model: model,
-                    message: message,
-                    _subject: emailSubject
-                })
+                body: params
             });
 
             // 5. Save in Firebase Firestore inquiries collection as Backup (Fail-silent)
@@ -598,10 +599,8 @@ if (contactForm) {
             }
 
             // Wait for both to complete (fail-silent for DB)
-            const [emailResponse] = await Promise.all([emailPromise, dbPromise]);
-            if (!emailResponse.ok) {
-                throw new Error("Email sending API failed with status: " + emailResponse.status);
-            }
+            // Note: Since we are using no-cors mode, the emailResponse has an opaque status of 0, so we do not check emailResponse.ok.
+            await Promise.all([emailPromise, dbPromise]);
 
             // 6. Success
             const successMsg = (window.i18nData && window.i18nData.alert_success && window.i18nData.alert_success[lang])
