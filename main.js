@@ -580,13 +580,26 @@ if (contactForm) {
 
         // 3. Prepare Payload
         const emailSubject = `[서종기계 웹사이트 문의] ${name}님의 파트너십 문의입니다.`;
-        const subjectInput = document.getElementById('formsubmit-subject');
-        if (subjectInput) {
-            subjectInput.value = emailSubject;
-        }
+        const params = new URLSearchParams();
+        params.append("이름 (Name)", name);
+        params.append("연락처 (Phone)", phone);
+        params.append("관심 기종 / 모델명 (Model)", model);
+        params.append("문의내용 (Message)", message);
+        params.append("_subject", emailSubject);
 
         try {
-            // 4. Save in Firebase Firestore inquiries collection as Backup (Fail-silent)
+            // 4. Send Email via FormSubmit.co AJAX API (immune to CORS preflight since it is a simple request using URLSearchParams without custom headers)
+            const emailPromise = fetch("https://formsubmit.co/ajax/dldbcks0619@naver.com", {
+                method: "POST",
+                body: params
+            }).then(async (res) => {
+                if (!res.ok) {
+                    throw new Error("FormSubmit response not ok");
+                }
+                return res.json();
+            });
+
+            // 5. Save in Firebase Firestore inquiries collection as Backup (Fail-silent)
             let dbPromise = Promise.resolve();
             if (window.db) {
                 dbPromise = window.db.collection('inquiries').add({
@@ -601,12 +614,8 @@ if (contactForm) {
                 });
             }
 
-            // Wait for DB backup to complete
-            await dbPromise;
-
-            // 5. Submit Form natively to the hidden iframe (immune to CORS & Preflight)
-            contactForm.action = "https://formsubmit.co/dldbcks0619@naver.com";
-            contactForm.submit();
+            // Wait for both to complete (fail-silent for DB)
+            await Promise.all([emailPromise, dbPromise]);
 
             // 6. Success Visual Feedback
             const successMsg = (window.i18nData && window.i18nData.alert_success && window.i18nData.alert_success[lang])
