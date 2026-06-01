@@ -582,18 +582,25 @@ if (contactForm) {
         const emailSubject = `[서종기계 웹사이트 문의] ${name}님의 파트너십 문의입니다.`;
 
         try {
-            // 4. Send Email via Submify API (using URLSearchParams & no-cors mode to bypass browser CORS preflight check)
-            const params = new URLSearchParams();
-            params.append("이름 (Name)", name);
-            params.append("연락처 (Phone)", phone);
-            params.append("관심 기종 / 모델명 (Model)", model);
-            params.append("문의내용 (Message)", message);
-            params.append("_subject", emailSubject);
-
-            const emailPromise = fetch("https://submify.vercel.app/dldbcks0619@naver.com", {
+            // 4. Send Email via FormSubmit.co's robust global AJAX API
+            const emailPromise = fetch("https://formsubmit.co/ajax/dldbcks0619@naver.com", {
                 method: "POST",
-                mode: "no-cors",
-                body: params
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    "이름 (Name)": name,
+                    "연락처 (Phone)": phone,
+                    "관심 기종 / 모델명 (Model)": model,
+                    "문의내용 (Message)": message,
+                    "_subject": emailSubject
+                })
+            }).then(async (res) => {
+                if (!res.ok) {
+                    throw new Error("FormSubmit response not ok");
+                }
+                return res.json();
             });
 
             // 5. Save in Firebase Firestore inquiries collection as Backup (Fail-silent)
