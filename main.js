@@ -27,31 +27,47 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
     // Hero Animations
     const heroTL = gsap.timeline();
 
-    heroTL.from(".reveal-text", {
-        y: 100,
-        opacity: 0,
-        duration: 1.2,
-        ease: "power4.out",
-        stagger: 0.2
-    })
-    .from(".reveal-text-sub", {
-        y: 50,
-        opacity: 0,
-        duration: 1,
-        ease: "power4.out"
-    }, "-=0.8")
-    .from(".reveal-btn", {
-        y: 30,
-        opacity: 0,
-        duration: 0.8,
-        ease: "power4.out"
-    }, "-=0.6")
-    .from("#hero-video", {
-        scale: 1.2,
-        opacity: 0,
-        duration: 2,
-        ease: "power2.out"
-    }, 0);
+    const revealText = document.querySelectorAll(".reveal-text");
+    const revealTextSub = document.querySelectorAll(".reveal-text-sub");
+    const revealBtn = document.querySelectorAll(".reveal-btn");
+    const heroVideo = document.querySelectorAll(".video-background video");
+
+    if (revealText.length > 0) {
+        heroTL.from(revealText, {
+            y: 100,
+            opacity: 0,
+            duration: 1.2,
+            ease: "power4.out",
+            stagger: 0.2
+        });
+    }
+
+    if (revealTextSub.length > 0) {
+        heroTL.from(revealTextSub, {
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            ease: "power4.out"
+        }, "-=0.8");
+    }
+
+    if (revealBtn.length > 0) {
+        heroTL.from(revealBtn, {
+            y: 30,
+            opacity: 0,
+            duration: 0.8,
+            ease: "power4.out"
+        }, "-=0.6");
+    }
+
+    if (heroVideo.length > 0) {
+        heroTL.from(heroVideo, {
+            scale: 1.2,
+            opacity: 0,
+            duration: 2,
+            ease: "power2.out"
+        }, 0);
+    }
 
     // Navbar scroll effect
     ScrollTrigger.create({
