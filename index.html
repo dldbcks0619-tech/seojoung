@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>서종기계 | 중고 기계 무역 플랫폼</title>
     <meta name="description" content="고품질 중고 CNC 선반, 머시닝 센터, 프레스 등 산업용 기계 무역 전문 플랫폼">
+    <link rel="shortcut icon" href="logo.jpg" type="image/jpeg">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,7 +18,7 @@
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.33/dist/lenis.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <link rel="stylesheet" href="style.css?v=7">
+    <link rel="stylesheet" href="style.css?v=8">
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
@@ -26,7 +27,7 @@
     <!-- Kakao Map & Postcode API -->
     <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=cdc462a58657b6ea87b777575dde5491&libraries=services&autoload=false"></script>
     <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-    <script src="i18n.js?v=7"></script>
+    <script src="i18n.js?v=8"></script>
 </head>
 <body class="dark-theme">
     <!-- Smooth Scroll Wrapper -->
@@ -239,20 +240,21 @@
                             </div>
                         </div>
                         <div class="contact-form">
-                            <form id="main-contact-form">
+                            <form id="main-contact-form" method="POST" target="hidden-submit-iframe">
+                                <input type="hidden" name="_subject" id="formsubmit-subject">
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <input type="text" data-i18n-placeholder="ph_name" placeholder="성함" required>
+                                        <input type="text" name="이름 (Name)" data-i18n-placeholder="ph_name" placeholder="성함" required>
                                     </div>
                                     <div class="form-group">
-                                        <input type="tel" data-i18n-placeholder="ph_phone" placeholder="연락처" required>
+                                        <input type="tel" name="연락처 (Phone)" data-i18n-placeholder="ph_phone" placeholder="연락처" required>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" data-i18n-placeholder="ph_model" placeholder="관심 기종 / 모델명" required>
+                                    <input type="text" name="관심 기종 / 모델명 (Model)" data-i18n-placeholder="ph_model" placeholder="관심 기종 / 모델명" required>
                                 </div>
                                 <div class="form-group">
-                                    <textarea data-i18n-placeholder="ph_msg" placeholder="문의 내용을 입력해주세요" rows="4"></textarea>
+                                    <textarea name="문의내용 (Message)" data-i18n-placeholder="ph_msg" placeholder="문의 내용을 입력해주세요" rows="4"></textarea>
                                 </div>
                                 <div class="privacy-agreement-box" data-i18n="privacy_content" data-lenis-prevent>
                                     <!-- Injected by i18n -->
@@ -263,6 +265,7 @@
                                 </div>
                                 <button type="submit" class="btn-primary w-full" data-i18n="submit_btn">상담 신청하기</button>
                             </form>
+                            <iframe name="hidden-submit-iframe" id="hidden-submit-iframe" style="display:none;"></iframe>
                         </div>
                     </div>
                 </div>
@@ -507,8 +510,8 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-instagram"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
     </a>
 
-    <script src="main.js?v=7"></script>
-    <script src="inventory.js?v=7"></script>
+    <script src="main.js?v=8"></script>
+    <script src="inventory.js?v=8"></script>
     <script>
         // Kakao Map Initialization
         function initMap() {

@@ -561,10 +561,10 @@ if (contactForm) {
             return;
         }
 
-        const name = contactForm.querySelector('input[type="text"]').value;
-        const phone = contactForm.querySelector('input[type="tel"]').value;
-        const model = contactForm.querySelectorAll('input[type="text"]')[1].value;
-        const message = contactForm.querySelector('textarea').value;
+        const name = contactForm.querySelector('input[name="이름 (Name)"]').value;
+        const phone = contactForm.querySelector('input[name="연락처 (Phone)"]').value;
+        const model = contactForm.querySelector('input[name="관심 기종 / 모델명 (Model)"]').value;
+        const message = contactForm.querySelector('textarea[name="문의내용 (Message)"]').value;
 
         // 2. Visual Feedback (Loading State)
         const submitBtn = contactForm.querySelector('button[type="submit"]');
@@ -580,30 +580,13 @@ if (contactForm) {
 
         // 3. Prepare Payload
         const emailSubject = `[서종기계 웹사이트 문의] ${name}님의 파트너십 문의입니다.`;
+        const subjectInput = document.getElementById('formsubmit-subject');
+        if (subjectInput) {
+            subjectInput.value = emailSubject;
+        }
 
         try {
-            // 4. Send Email via FormSubmit.co's robust global AJAX API
-            const emailPromise = fetch("https://formsubmit.co/ajax/dldbcks0619@naver.com", {
-                method: "POST",
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    "이름 (Name)": name,
-                    "연락처 (Phone)": phone,
-                    "관심 기종 / 모델명 (Model)": model,
-                    "문의내용 (Message)": message,
-                    "_subject": emailSubject
-                })
-            }).then(async (res) => {
-                if (!res.ok) {
-                    throw new Error("FormSubmit response not ok");
-                }
-                return res.json();
-            });
-
-            // 5. Save in Firebase Firestore inquiries collection as Backup (Fail-silent)
+            // 4. Save in Firebase Firestore inquiries collection as Backup (Fail-silent)
             let dbPromise = Promise.resolve();
             if (window.db) {
                 dbPromise = window.db.collection('inquiries').add({
@@ -618,11 +601,14 @@ if (contactForm) {
                 });
             }
 
-            // Wait for both to complete (fail-silent for DB)
-            // Note: Since we are using no-cors mode, the emailResponse has an opaque status of 0, so we do not check emailResponse.ok.
-            await Promise.all([emailPromise, dbPromise]);
+            // Wait for DB backup to complete
+            await dbPromise;
 
-            // 6. Success
+            // 5. Submit Form natively to the hidden iframe (immune to CORS & Preflight)
+            contactForm.action = "https://formsubmit.co/dldbcks0619@naver.com";
+            contactForm.submit();
+
+            // 6. Success Visual Feedback
             const successMsg = (window.i18nData && window.i18nData.alert_success && window.i18nData.alert_success[lang])
                 || "상담 신청이 정상적으로 접수되었습니다. 확인 후 신속하게 연락드리겠습니다.";
             alert(successMsg);
