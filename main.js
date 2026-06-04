@@ -588,11 +588,20 @@ if (contactForm) {
         params.append("_subject", emailSubject);
 
         try {
-            // 4. Send Email via Submify AJAX API (using mode: "no-cors" to completely bypass CORS validation on the response)
-            const emailPromise = fetch("https://submify.vercel.app/dldbcks0619@naver.com", {
+            // 4. Send Email via FormSubmit AJAX API (fully supports CORS with JSON payload)
+            const emailPromise = fetch("https://formsubmit.co/ajax/dldbcks0619@naver.com", {
                 method: "POST",
-                mode: "no-cors",
-                body: params
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify({
+                    "이름 (Name)": name,
+                    "연락처 (Phone)": phone,
+                    "관심 기종 / 모델명 (Model)": model,
+                    "문의내용 (Message)": message,
+                    "_subject": emailSubject
+                })
             });
 
             // 5. Save in Firebase Firestore inquiries collection as Backup (Fail-silent)
@@ -636,8 +645,8 @@ if (contactForm) {
 // SPA Router Logic
 const navLinks = document.querySelectorAll('.nav-links a');
 const sections = {
-    '#hero': ['#hero', '#inventory', '#cta'],
-    '#inventory': ['#hero', '#inventory', '#cta'],
+    '#hero': ['#hero', '#showcase-3d', '#inventory', '#cta'],
+    '#inventory': ['#hero', '#showcase-3d', '#inventory', '#cta'],
     '#board': ['#board'],
     '#about': ['#about'],
     '#contact': ['#contact']

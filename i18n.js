@@ -121,6 +121,13 @@ const i18nData = {
     cta_desc: { ko: "전문 상담사가 고객님께 필요한 최적의 장비를 찾아드립니다.", en: "Our professional consultants will find the best equipment for your needs.", cn: "专业顾问将为您寻找最适合您的设备。" },
     cta_btn: { ko: "1:1 맞춤 상담 요청", en: "Request 1:1 Consultation", cn: "申请一对一咨询" },
 
+    // 3D Showcase
+    showcase_badge: { ko: "3D Virtual Showroom", en: "3D Virtual Showroom", cn: "3D 虚拟展厅" },
+    showcase_title: { ko: "CNC 선반 / 머시닝 센터<br><span style=\"color:var(--primary);\">3D 디지털 전시관</span>", en: "CNC Lathe / Machining Center<br><span style=\"color:var(--primary);\">3D Digital Showroom</span>", cn: "数控车床 / 加工中心<br><span style=\"color:var(--primary);\">3D 数字展示馆</span>" },
+    showcase_desc: { ko: "서종기계가 제공하는 프리미엄 CNC 공작 기계 설비를 3D 가상 전시관에서 직관적으로 확인해 보세요. 화면을 마우스로 드래그하면 기계를 360도 자유롭게 회전하며 다각도에서 디테일을 살펴보실 수 있습니다.", en: "Experience premium CNC machine tools offered by Seojong Machinery in our 3D virtual showroom. Drag to rotate 360 degrees and inspect fine details from multiple angles.", cn: "在3D虚拟展厅中直观地查看瑞钟机械提供的优质数控机床设备。拖动鼠标即可360度自由旋转，多角度查看细节。" },
+    showcase_btn_1: { ko: "실제 매물 정보 보기", en: "View Listings", cn: "查看实际库存" },
+    showcase_btn_2: { ko: "맞춤 상담 신청하기", en: "Request Consultation", cn: "申请定制咨询" },
+
     // Footer
     ft_service: { ko: "Service", en: "Service", cn: "服务" },
     ft_s1: { ko: "매각 상담", en: "Sales Consultation", cn: "销售咨询" },

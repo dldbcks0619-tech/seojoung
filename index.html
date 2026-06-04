@@ -104,6 +104,30 @@
                 </div>
             </section>
 
+            <!-- 3D Machine Showcase Section -->
+            <section id="showcase-3d" class="section" style="padding: 80px 0; border-bottom: 1px solid var(--border);">
+                <div class="container">
+                    <div class="showcase-grid">
+                        <!-- Left: 3D Model Embed Container -->
+                        <div style="position: relative; width: 100%; height: 420px; border-radius: 24px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.3); background: #000;">
+                            <iframe title="Factory Machine" src="https://sketchfab.com/models/80c7d78147ed4af99e490e26adf3f76e/embed?autostart=1&ui_theme=dark&dnt=1&scrollwheel=0" frameborder="0" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share style="width: 100%; height: 100%; border: 0;"></iframe>
+                        </div>
+                        <!-- Right: Descriptions & Title -->
+                        <div style="display: flex; flex-direction: column; justify-content: center;">
+                            <span style="color: var(--primary); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; display: inline-block;" data-i18n="showcase_badge">3D Virtual Showroom</span>
+                            <h2 style="font-size: 36px; font-weight: 800; margin-bottom: 24px; line-height: 1.3;" data-i18n="showcase_title">CNC 선반 / 머시닝 센터<br><span style="color: var(--primary);">3D 디지털 전시관</span></h2>
+                            <p style="color: var(--text-dim); line-height: 1.8; margin-bottom: 30px; font-size: 16px; font-weight: 400;" data-i18n="showcase_desc">
+                                서종기계가 제공하는 프리미엄 CNC 공작 기계 설비를 3D 가상 전시관에서 직관적으로 확인해 보세요. 화면을 마우스로 드래그하면 기계를 360도 자유롭게 회전하며 다각도에서 디테일을 살펴보실 수 있습니다.
+                            </p>
+                            <div class="hero-btns" style="margin-top: 0;">
+                                <a href="#inventory" class="btn-primary" data-i18n="showcase_btn_1">실제 매물 정보 보기</a>
+                                <a href="#contact" class="btn-secondary" data-i18n="showcase_btn_2">맞춤 상담 신청하기</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Inventory Section -->
             <section id="inventory" class="section">
                 <div class="container">
@@ -514,7 +538,13 @@
         // Kakao Map Initialization
         function initMap() {
             const container = document.getElementById('map');
-            if (!container || typeof kakao === 'undefined') return;
+            if (!container) return;
+
+            // Poll if Kakao SDK is not fully loaded yet
+            if (typeof kakao === 'undefined' || !kakao.maps) {
+                setTimeout(initMap, 100);
+                return;
+            }
 
             // If map is already initialized, just relayout and center it to prevent duplicate map instances and ghost overlays
             if (window.kakaoMap) {
@@ -534,6 +564,14 @@
             const map = new kakao.maps.Map(container, options);
             window.kakaoMap = map;
             window.kakaoMapCenter = targetCoords;
+
+            // Prevent map tiles from breaking on window resizing
+            window.addEventListener('resize', () => {
+                if (window.kakaoMap && window.kakaoMapCenter) {
+                    window.kakaoMap.relayout();
+                    window.kakaoMap.setCenter(window.kakaoMapCenter);
+                }
+            });
 
             // Trigger delayed relayouts to assemble the map tiles beautifully even on cold-start hidden display states
             setTimeout(() => {

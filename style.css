@@ -1215,7 +1215,7 @@ footer {
 
 #map {
     border: 1px solid var(--border);
-    transition: 0.3s var(--ease-out-expo);
+    transition: box-shadow 0.3s var(--ease-out-expo), border-color 0.3s var(--ease-out-expo);
 }
 
 #map:hover {
@@ -1369,4 +1369,19 @@ footer {
     cursor: pointer;
     font-weight: 500;
     line-height: 1;
+}
+
+/* 3D Showcase Section */
+.showcase-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 60px;
+    align-items: center;
+}
+
+@media (max-width: 968px) {
+    .showcase-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
 }
