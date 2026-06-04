@@ -16,8 +16,8 @@ const i18nData = {
     hero_btn_2: { ko: "빠른 상담 신청", en: "Quick Inquiry", cn: "快速咨询" },
     hero2_title_1: { ko: "글로벌 중고 기계", en: "Global Machinery", cn: "全球二手机械" },
     hero2_title_2: { ko: "무역의 동반자", en: "Trading Partner", cn: "贸易同伴" },
-    hero2_title_3: { ko: ", 서종기계", en: ", Sojong", cn: "，瑞钟" },
-    hero2_sub: { ko: "최상의 장비 점검과 투명한 성능 테스트를 보장합니다<br>글로벌 산업 현장의 든든한 파트너가 되어 드립니다", en: "Guaranteeing best equipment checks and transparent performance tests.<br>We are your reliable partner in the global industrial field.", cn: "提供最佳的 设备检查和透明的 性能测试。<br>瑞钟机械成为您在全球工业现场的 可靠伙伴。" },
+    hero2_title_3: { ko: ", 서종기계", en: ", Seojong", cn: "，瑞钟" },
+    hero2_sub: { ko: "최상의 장비 점검과 투명한 성능 테스트를 보장합니다<br>글로벌 산업 현장의 든든한 파트너가 되어 드립니다", en: "Guaranteeing best equipment checks and transparent performance tests.<br>We are your reliable partner in the global industrial field.", cn: "提供最佳的设备检查和透明的性能测试。<br>瑞钟机械成为您在全球工业现场的可靠伙伴。" },
     hero2_btn_1: { ko: "1:1 맞춤 문의", en: "1:1 Inquiry", cn: "1对1咨询" },
     hero2_btn_2: { ko: "회사 소개 보기", en: "About Us", cn: "关于我们" },
 

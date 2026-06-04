@@ -305,6 +305,14 @@ if (logoEl) {
         
         if (logoClickCount >= 5) {
             logoClickCount = 0;
+            if (localStorage.getItem('isAdmin') === 'true') {
+                if (confirm('이미 관리자로 로그인되어 있습니다. 로그아웃 하시겠습니까?')) {
+                    localStorage.removeItem('isAdmin');
+                    alert('로그아웃 되었습니다.');
+                    location.reload();
+                    return;
+                }
+            }
             const password = prompt('관리자 암호를 입력해주세요:');
             if (password === '1234') {
                 window.isAdmin = true;
@@ -782,8 +790,14 @@ window.openAdminTab = function(tabId) {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    localStorage.removeItem('isAdmin');
-    window.isAdmin = false;
+    if (localStorage.getItem('isAdmin') === 'true') {
+        window.isAdmin = true;
+        document.querySelectorAll('.admin-only').forEach(el => {
+            el.style.display = 'inline-block';
+        });
+    } else {
+        window.isAdmin = false;
+    }
 });
 
 // Hero Slider logic with 5-Second Autoplay

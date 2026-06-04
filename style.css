@@ -103,7 +103,7 @@ ul {
 }
 
 .btn-outline {
-    border: 1px solid var(--dark-border);
+    border: 1px solid var(--border);
     padding: 8px 16px;
     border-radius: 8px;
     font-size: 14px;
@@ -1080,12 +1080,22 @@ footer {
     /* Hero */
     #hero {
         padding-top: 140px;
+        height: auto;
+        min-height: 100vh;
+        padding-bottom: 60px;
+    }
+    .hero-slider {
+        height: auto;
+    }
+    .hero-slide {
+        height: auto;
+        min-height: calc(100vh - 200px);
+        padding: 40px 0;
     }
     
     /* Modals */
     .modal-content {
         padding: 30px;
-        margin-top: 50px;
     }
 }
 
@@ -1178,6 +1188,28 @@ footer {
     .instagram-float svg {
         width: 20px;
         height: 20px;
+    }
+
+    /* Additional mobile adjustments */
+    .about-content {
+        padding: 24px !important;
+    }
+    .showcase-grid > div:first-child {
+        height: 280px !important;
+    }
+    .modal-content {
+        padding: 20px;
+    }
+    .close-modal {
+        top: 16px;
+        right: 16px;
+        font-size: 32px;
+    }
+}
+
+@media (max-width: 480px) {
+    .section-title {
+        font-size: 26px;
     }
 }
 
